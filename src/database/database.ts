@@ -1,13 +1,5 @@
-import {createConnection, Connection} from "typeorm"
+import { createConnection } from "typeorm"
 
-const connect = async () => {
-    const connection = await createConnection({
-        type: "postgres",
-        host: 'localhost',
-        port: 5432,
-        username: 'postgres',
-        password: '',
-        database: 'pokedex-backend'
-    })
-}
+export const connect = async () => await createConnection()
+
 
