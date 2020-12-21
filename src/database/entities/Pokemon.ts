@@ -9,6 +9,9 @@ export class Pokemon {
     pokemonName: string;
 
     @Column()
+    genus: string;
+
+    @Column()
     primaryType: string;
 
     @Column()
@@ -28,4 +31,7 @@ export class Pokemon {
 
     @Column()
     weight: number
+
+    @Column("simple-array")
+    colors: string[]
 }

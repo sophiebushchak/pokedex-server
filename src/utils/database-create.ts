@@ -1,6 +1,9 @@
 import {connect} from "../database/database"
 import {Pokemon} from "../database/entities/Pokemon";
+import * as fs from "fs"
 import axios from 'axios';
+import {createWriteStream} from "fs";
+import {response} from "express";
 
 const pokeApiSourceUrl = 'https://pokeapi.co/api/v2/'
 
@@ -18,12 +21,12 @@ const setupDatabase = async () => {
 
     let requestCount = 0;
 
-    for (let i = 1; i <= totalPokemon; i++) {
+    for (let i = 1; i <= 5; i++) {
         const retrievedPokemon = await axios.get(pokeApiSourceUrl + "/pokemon/" + i)
-        pokemonResources.push(retrievedPokemon)
+        pokemonResources.push(retrievedPokemon.data)
         requestCount++;
         const retrievedPokemonSpecies = await axios.get(pokeApiSourceUrl + "/pokemon-species/" + i)
-        pokemonSpeciesResources.push(retrievedPokemonSpecies)
+        pokemonSpeciesResources.push(retrievedPokemonSpecies.data)
         requestCount++;
         console.log(i + ". " + retrievedPokemonSpecies.data.name)
         if (requestCount % 100 == 0) {
@@ -34,6 +37,32 @@ const setupDatabase = async () => {
             console.log("Continuing..")
         }
     }
+
+    const image = await axios.get(pokemonResources[1].sprites.front_default)
+    fs.createWriteStream("./images/" + 1 + ".png")
+    axios.request({
+        method: "GET",
+        url: image,
+        responseType: "blob"
+    }).then(response => {
+
+            }
+        )
+
+    for (let i = 0; i < 5; i++) {
+        const createdPokemon = new Pokemon()
+        const basicData = pokemonResources[i]
+        const speciesData = pokemonSpeciesResources[i]
+        createdPokemon.pokedexNumber = i + 1;
+        createdPokemon.pokemonName = speciesData.names.find(name => name.language.name == "en").name
+        createdPokemon.primaryType = basicData.types.find(type => type.slot == 1).type.name
+        const secondaryType = basicData.types.find(type => type.slot == 2)
+        createdPokemon.secondaryType = secondaryType ? secondaryType.type.name : null;
+        createdPokemon.genus = speciesData.genera.find(genus => genus.language.name == "en").genus
+
+    }
+
+
 }
 
 const wait = (waitTimeMS) => {
@@ -41,7 +70,8 @@ const wait = (waitTimeMS) => {
 }
 
 setupDatabase()
-    .then(result => {})
+    .then(result => {
+    })
     .catch(error => {
         console.log(error)
     })
