@@ -7,5 +7,5 @@ export default {
     "database": 'postgres',
     "schema": "pokedex-backend",
     "connectTimeoutMS": 10000,
-    "entities": ["./src/database/entities/*.ts"]
+    "entities": [__dirname + "/src/database/entities/*.ts"]
 }

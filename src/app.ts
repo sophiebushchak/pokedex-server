@@ -1,8 +1,10 @@
 import express from "express";
 
 import Config from "../config";
-import { performance } from "perf_hooks"
+import {performance} from "perf_hooks"
 
+import * as database from "./database/database"
+import {Connection} from "typeorm";
 
 const app = express();
 const port = Config.PORT;
@@ -15,8 +17,21 @@ app.use((req, res, next) => {
 })
 
 const serverStartTimer = performance.now()
-app.listen(port, () => {
-    const serverStartedTimer = performance.now()
-    console.log(`Launched server on port ${port} in ${Math.round(((serverStartedTimer - serverStartTimer) +
-        Number.EPSILON) * 100) / 100} milliseconds.`)
-});
+
+
+database
+    .connect()
+    .then(() => {
+        app.listen(port, () => {
+            const serverStartedTimer = performance.now()
+            console.log(`Launched server on port ${port} in ${Math.round(((serverStartedTimer - serverStartTimer) +
+                Number.EPSILON) * 100) / 100} milliseconds.`)
+        })
+    })
+    .catch(error => {
+        console.log(error)
+    })
+
+
+
+

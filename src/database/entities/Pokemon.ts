@@ -14,7 +14,7 @@ export class Pokemon {
     @Column()
     primaryType: string;
 
-    @Column()
+    @Column({nullable: true})
     secondaryType: string;
 
     @Column()
@@ -32,6 +32,6 @@ export class Pokemon {
     @Column()
     weight: number
 
-    @Column("simple-array")
-    colors: string[]
+    @Column()
+    color: string
 }
