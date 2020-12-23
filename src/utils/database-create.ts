@@ -35,7 +35,7 @@ const setupDatabase = async () => {
 
     let requestCount = 0;
 
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= totalPokemon; i++) {
         const retrievedPokemon = await axios.get(pokeApiSourceUrl + "/pokemon/" + i)
         pokemonResources.push(retrievedPokemon.data)
         requestCount++;
@@ -54,7 +54,7 @@ const setupDatabase = async () => {
 
     const pokemon: Pokemon[] = []
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < pokemonResources.length; i++) {
         const createdPokemon: Pokemon = await createPokemon(pokemonResources[i], pokemonSpeciesResources[i])
         pokemon.push(createdPokemon)
     }
@@ -79,7 +79,7 @@ const saveImage = async (imageUrl: string, pokemonNumber: number): Promise<strin
     })
     const spriteLocation = path.join(__dirname, "..", "sprites", pokemonNumber + ".png")
     imageResponseData.data.pipe(createWriteStream(spriteLocation))
-    return `/${pokemonNumber}.png`
+    return `/sprites/${pokemonNumber}.png`
 }
 
 const createPokemon = async (basicData: any, speciesData: any): Promise<Pokemon> => {
@@ -90,7 +90,9 @@ const createPokemon = async (basicData: any, speciesData: any): Promise<Pokemon>
     const secondaryType = basicData.types.find(type => type.slot == 2)
     createdPokemon.secondaryType = secondaryType ? secondaryType.type.name : null;
     createdPokemon.genus = speciesData.genera.find(genus => genus.language.name == "en").genus
-    createdPokemon.spriteUrl = await saveImage(basicData.sprites.front_default, basicData.id)
+    if (basicData.sprites.front_default) {
+        createdPokemon.spriteUrl = await saveImage(basicData.sprites.front_default, basicData.id)
+    }
     const generationUrl: string = speciesData.generation.url
     createdPokemon.generation = parseInt(generationUrl.charAt(generationUrl.length - 2))
     const flavorTextVersion: string = createdPokemon.generation <= 6 ? "omega-ruby" : createdPokemon.generation == 7 ? "ultra-sun" : "sword"

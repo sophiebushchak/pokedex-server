@@ -17,7 +17,7 @@ export class Pokemon {
     @Column({nullable: true})
     secondaryType: string;
 
-    @Column()
+    @Column({nullable: true})
     spriteUrl: string;
 
     @Column()
