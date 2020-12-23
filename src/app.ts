@@ -4,7 +4,8 @@ import Config from "../config";
 import {performance} from "perf_hooks"
 
 import * as database from "./database/database"
-import {Connection} from "typeorm";
+
+import pokemonRoutes from "./rest-api/routes/PokemonRoutes"
 
 const app = express();
 const port = Config.PORT;
@@ -18,10 +19,11 @@ app.use((req, res, next) => {
 
 const serverStartTimer = performance.now()
 
-
 database
     .connect()
-    .then(() => {
+    .then((result) => {
+        console.log(result)
+        app.use('/api', pokemonRoutes)
         app.listen(port, () => {
             const serverStartedTimer = performance.now()
             console.log(`Launched server on port ${port} in ${Math.round(((serverStartedTimer - serverStartTimer) +

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "db-setup": "ts-node src/utils/database-create.ts",
+    "db-setup": "ts-node src/utils/DatabaseCreate.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
