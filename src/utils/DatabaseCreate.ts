@@ -1,8 +1,7 @@
 import {Pokemon} from "../database/entities/Pokemon";
 import * as fs from "fs"
+import {createWriteStream} from "fs"
 import axios from 'axios';
-import {createWriteStream} from "fs";
-import {response} from "express";
 import path from "path";
 import {createConnection} from "typeorm";
 import {PokemonSprites} from "../database/entities/PokemonSprites";
@@ -57,6 +56,24 @@ const setupDatabase = async () => {
         await connection.manager.save(sprites)
         pokemon.sprites = sprites
         await connection.manager.save(pokemon)
+    }
+
+    for (let i = 0; i < pokemonSpeciesResources.length; i++) {
+        if (pokemonSpeciesResources[i].evolves_from_species) {
+            const pokemon: Pokemon = await connection.manager.findOne(Pokemon, {
+                where: [
+                    {pokedexNumber: i + 1}
+                ]
+            })
+            const evolvesFromSpeciesData: any = await axios.get(pokemonSpeciesResources[i].evolves_from_species.url)
+            const evolvesFromPokedexNumber = evolvesFromSpeciesData.data.id
+            pokemon.evolvesFrom = await connection.manager.findOne(Pokemon, {
+                where: [
+                    {pokedexNumber: evolvesFromPokedexNumber}
+                ]
+            });
+            await connection.manager.save(pokemon)
+        }
     }
 
     console.log("Database has been filled with data.")

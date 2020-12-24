@@ -33,7 +33,15 @@ export class Pokemon {
     @Column()
     color: string
 
-    @OneToOne(() => PokemonSprites)
+    @OneToOne(() => PokemonSprites, {
+        eager: true
+    })
     @JoinColumn()
     sprites: PokemonSprites;
+
+    @OneToOne(() => Pokemon, {
+        nullable: true
+    })
+    @JoinColumn()
+    evolvesFrom: Pokemon
 }
