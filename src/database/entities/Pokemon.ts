@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn} from "typeorm"
+import {PokemonSprites} from "./PokemonSprites";
 
 @Entity()
 export class Pokemon {
@@ -17,9 +18,6 @@ export class Pokemon {
     @Column({nullable: true})
     secondaryType: string;
 
-    @Column({nullable: true})
-    spriteUrl: string;
-
     @Column()
     generation: number;
 
@@ -34,4 +32,16 @@ export class Pokemon {
 
     @Column()
     color: string
+
+    @OneToOne(() => PokemonSprites, {
+        eager: true
+    })
+    @JoinColumn()
+    sprites: PokemonSprites;
+
+    @OneToOne(() => Pokemon, {
+        nullable: true
+    })
+    @JoinColumn()
+    evolvesFrom: Pokemon
 }
