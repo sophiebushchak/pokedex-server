@@ -1,4 +1,3 @@
-import {connect} from "../database/database"
 import {Pokemon} from "../database/entities/Pokemon";
 import * as fs from "fs"
 import axios from 'axios';
@@ -35,7 +34,7 @@ const setupDatabase = async () => {
 
     let requestCount = 0;
 
-    for (let i = 1; i <= totalPokemon; i++) {
+    for (let i = 1; i <= 20; i++) {
         const retrievedPokemon = await axios.get(pokeApiSourceUrl + "/pokemon/" + i)
         pokemonResources.push(retrievedPokemon.data)
         requestCount++;

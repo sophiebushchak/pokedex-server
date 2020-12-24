@@ -3,9 +3,8 @@ import express from "express";
 import Config from "../config";
 import {performance} from "perf_hooks"
 
-import * as database from "./database/database"
-
 import pokemonRoutes from "./rest-api/routes/PokemonRoutes"
+import errorResponse from "./middleware/ErrorResponse"
 
 const app = express();
 const port = Config.PORT;
@@ -19,20 +18,18 @@ app.use((req, res, next) => {
 
 const serverStartTimer = performance.now()
 
-database
-    .connect()
-    .then((result) => {
-        console.log(result)
-        app.use('/api', pokemonRoutes)
-        app.listen(port, () => {
-            const serverStartedTimer = performance.now()
-            console.log(`Launched server on port ${port} in ${Math.round(((serverStartedTimer - serverStartTimer) +
-                Number.EPSILON) * 100) / 100} milliseconds.`)
-        })
-    })
-    .catch(error => {
-        console.log(error)
-    })
+app.use('/sprites', express.static("./src/sprites"))
+
+app.use('/api', pokemonRoutes)
+
+app.use(errorResponse)
+
+app.listen(port, () => {
+    const serverStartedTimer = performance.now()
+    console.log(`Launched server on port ${port} in ${Math.round(((serverStartedTimer - serverStartTimer) +
+        Number.EPSILON) * 100) / 100} milliseconds.`)
+})
+
 
 
 
