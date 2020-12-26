@@ -41,7 +41,7 @@ export default class PokemonController {
                     pokedexNumber: "ASC"
                 }
             })
-            await wait(3000)
+            await wait(500)
             return res.status(200).json(
                 {
                     message: `Found ${pokemon.length} Pokémon.`,
