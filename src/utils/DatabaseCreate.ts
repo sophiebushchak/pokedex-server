@@ -3,6 +3,7 @@ import * as fs from "fs"
 import {createWriteStream} from "fs"
 import axios from 'axios';
 import path from "path";
+import Wait from "./Wait"
 import {createConnection} from "typeorm";
 import {PokemonSprites} from "../database/entities/PokemonSprites";
 
@@ -78,10 +79,6 @@ const setupDatabase = async () => {
     console.log("Database has been filled with data.")
 }
 
-const wait = (waitTimeMS) => {
-    return new Promise(resolve => setTimeout(resolve, waitTimeMS))
-}
-
 const saveImage = async (imageUrl: string, pokemonId: number, filename: string): Promise<string> => {
     const imageResponseData = await axios({
         method: "get",
@@ -95,7 +92,7 @@ const saveImage = async (imageUrl: string, pokemonId: number, filename: string):
     }
     const file = `${filename}.png`
     imageResponseData.data.pipe(createWriteStream(path.join(spriteLocation, file)))
-    return `/sprites/${pokemonId}/${filename}.png`
+    return `sprites/${pokemonId}/${filename}.png`
 }
 
 const createPokemon = async (basicData: any, speciesData: any): Promise<Pokemon> => {
