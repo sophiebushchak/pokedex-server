@@ -40,7 +40,7 @@ export class Pokemon {
     sprites: PokemonSprites;
 
     @ManyToOne(() => Pokemon, pokemon => pokemon.evolvesFrom, {
-        nullable: true
+        nullable: true,
     })
     evolvesFrom: Pokemon
 }
