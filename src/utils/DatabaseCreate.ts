@@ -33,7 +33,7 @@ const setupDatabase = async () => {
 
     let requestCount = 0;
 
-    for (let i = 1; i <= 20; i++) {
+    for (let i = 1; i <= totalPokemon; i++) {
         const retrievedPokemon = await axios.get(pokeApiSourceUrl + "/pokemon/" + i)
         pokemonResources.push(retrievedPokemon.data)
         requestCount++;
@@ -44,7 +44,6 @@ const setupDatabase = async () => {
         if (requestCount % 100 == 0) {
             console.log('Retrieved ' + i + " Pokemon from PokeAPI so far.")
             console.log("Waiting 30 seconds to not overload the API..")
-            await wait(30000)
             requestCount = 0;
             console.log("Continuing..")
         }
@@ -62,7 +61,7 @@ const setupDatabase = async () => {
         if (pokemonSpeciesResources[i].evolves_from_species) {
             const pokemon: Pokemon = await connection.manager.findOne(Pokemon, {
                 where: [
-                    {pokedexNumber: i + 1}
+                    {pokedexNumber: pokemonSpeciesResources[i].id}
                 ]
             })
             const evolvesFromSpeciesData: any = await axios.get(pokemonSpeciesResources[i].evolves_from_species.url)
@@ -109,7 +108,7 @@ const createPokemon = async (basicData: any, speciesData: any): Promise<Pokemon>
     createdPokemon.genus = speciesData.genera.find(genus => genus.language.name == "en").genus
     const generationUrl: string = speciesData.generation.url
     createdPokemon.generation = parseInt(generationUrl.charAt(generationUrl.length - 2))
-    const flavorTextVersion: string = createdPokemon.generation <= 6 ? "omega-ruby" : createdPokemon.generation == 7 ? "ultra-sun" : "sword"
+    const flavorTextVersion: string = createdPokemon.generation <= 6 ? "omega-ruby" : createdPokemon.generation == 7 && createdPokemon.pokedexNumber < 808 ? "ultra-sun" : "sword"
     createdPokemon.pokedexEntryDescription = speciesData.flavor_text_entries
         .find(entry => entry.language.name == "en" && entry.version.name == flavorTextVersion).flavor_text
     createdPokemon.height = basicData.height

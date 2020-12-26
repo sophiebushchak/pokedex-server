@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn} from "typeorm"
+import {Entity, Column, PrimaryColumn, OneToOne, JoinColumn, ManyToOne} from "typeorm"
 import {PokemonSprites} from "./PokemonSprites";
 
 @Entity()
@@ -39,9 +39,8 @@ export class Pokemon {
     @JoinColumn()
     sprites: PokemonSprites;
 
-    @OneToOne(() => Pokemon, {
+    @ManyToOne(() => Pokemon, pokemon => pokemon.evolvesFrom, {
         nullable: true
     })
-    @JoinColumn()
     evolvesFrom: Pokemon
 }
