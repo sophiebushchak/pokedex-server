@@ -52,7 +52,44 @@ export default class PokemonController {
             const error = {
                 errorThrown
             }
-            next(error)
+            return next(error)
+        }
+    }
+
+    getPokemon = async (req, res, next) => {
+        try {
+            const pokedexNumber = req.params.pokedexNumber
+            if (!pokedexNumber) {
+                const errorThrown = new Error("No Pokemon specified")
+                const error = {
+                    errorThrown,
+                    statusCode: 400
+                }
+                return next(error)
+            }
+            const pokemon = await this.pokemonRepository.findOne({
+                where: {
+                    pokedexNumber: pokedexNumber
+                }
+            })
+            if (!pokemon) {
+                const errorThrown = new Error("No Pokemon found with Pokedex number: " + pokedexNumber)
+                const error = {
+                    errorThrown,
+                    statusCode: 404
+                }
+                return next(error)
+            }
+            return res.status(200).json({
+                message: "Found Pokemon with Pokedex number " + pokedexNumber,
+                statusCode: 200,
+                pokemon: pokemon
+            })
+        } catch (errorThrown) {
+            const error = {
+                errorThrown
+            }
+            return next(error)
         }
     }
 
