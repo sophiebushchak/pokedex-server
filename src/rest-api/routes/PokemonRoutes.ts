@@ -8,6 +8,8 @@ router.get('/pokedex', controller.getPokedex)
 
 router.get('/pokedex/count', controller.getTotalPokemon)
 
+router.get('/pokemon/evolutions/:pokedexNumber', controller.getEvolutions)
+
 router.get('/pokemon/:pokedexNumber', controller.getPokemon)
 
 export default router;

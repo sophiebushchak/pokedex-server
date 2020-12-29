@@ -93,6 +93,107 @@ export default class PokemonController {
         }
     }
 
+    getEvolutions = async (req, res, next) => {
+        try {
+            const pokedexNumber = req.params.pokedexNumber
+            if (!pokedexNumber) {
+                const errorThrown = new Error("No Pokemon specified")
+                const error = {
+                    errorThrown,
+                    statusCode: 400
+                }
+                return next(error)
+            }
+            let first = await this.pokemonRepository.findOne({
+                where: {
+                    pokedexNumber: pokedexNumber
+                },
+                relations: [
+                    "sprites",
+                    "evolvesFrom"
+                ]
+            })
+            console.log(first)
+            if (!first) {
+                const errorThrown = new Error("No Pokemon found with Pokedex number: " + pokedexNumber)
+                const error = {
+                    errorThrown,
+                    statusCode: 404
+                }
+                return next(error)
+            }
+            const originalPokemon = first
+            console.log(`First: ${first.pokemonName}`)
+            let second: Pokemon = null
+            let third: Pokemon = null;
+            if (first.evolvesFrom) {
+                second = first;
+                first = await this.pokemonRepository.findOne({
+                    where: {
+                        pokedexNumber: second.evolvesFrom.pokedexNumber
+                    },
+                    relations: [
+                        "sprites",
+                        "evolvesFrom"
+                    ]
+                })
+                second.evolvesFrom = null
+            }
+            if (second) {
+                if (first.evolvesFrom) {
+                    third = second;
+                    second = first;
+                    first = second.evolvesFrom
+                    third.evolvesFrom = null
+                    second.evolvesFrom = null
+                    return res.status(200).json({
+                        first: first,
+                        second: second,
+                        third: third
+                    })
+                }
+            }
+            const evolutionOfPokemon = await this.pokemonRepository.findOne({
+                where: {
+                    evolvesFrom: pokedexNumber
+                },
+                relations: [
+                    "sprites",
+                    "evolvesFrom"
+                ]
+            })
+            if (evolutionOfPokemon) {
+                if (second) {
+                    third = evolutionOfPokemon;
+                    third.evolvesFrom = null
+                } else {
+                    second = evolutionOfPokemon
+                }
+            }
+            if (second && !third) {
+                second.evolvesFrom = null
+                third = await this.pokemonRepository.findOne({
+                    where: {
+                        evolvesFrom: second.pokedexNumber
+                    },
+                    relations: [
+                        "sprites",
+                    ]
+                })
+            }
+            return res.status(200).json({
+                first: first,
+                second: second,
+                third: third
+            })
+        } catch (errorThrown) {
+            const error = {
+                errorThrown
+            }
+            next(error)
+        }
+    }
+
     getTotalPokemon = async (req, res, next) => {
         try {
             const count = await this.pokemonRepository.count()
