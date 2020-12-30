@@ -1,8 +1,6 @@
 import {createConnection, getConnection, Repository} from "typeorm";
 import {Pokemon} from "../../database/entities/Pokemon";
 
-import wait from "../../utils/Wait";
-
 export default class PokemonController {
 
     private pokemonRepository: Repository<Pokemon>;
@@ -87,7 +85,7 @@ export default class PokemonController {
                     usedWhere = true
                 }
             }
-            query.orderBy("pokemon.pokedexNumber")
+            query.leftJoinAndSelect("pokemon.sprites", "sprites").orderBy("pokemon.pokedexNumber")
             if (!usedWhere) {
                 query.limit(limit).offset(offset)
             }
