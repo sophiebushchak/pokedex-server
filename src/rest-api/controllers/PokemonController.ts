@@ -1,7 +1,6 @@
 import {createConnection, getConnection, Repository} from "typeorm";
 import {Pokemon} from "../../database/entities/Pokemon";
 
-import Wait from "../../utils/Wait"
 import wait from "../../utils/Wait";
 
 export default class PokemonController {
@@ -19,29 +18,80 @@ export default class PokemonController {
         try {
             let offset: number = req.query.offset;
             let limit: number = req.query.limit;
+            let name: String = req.query.name || null;
+            let generation: number = req.query.generation || null;
+            let color: String = req.query.color || null;
+            let minWeight: number = req.query.minWeight || null;
+            let maxWeight: number = req.query.maxWeight || null;
+            let minHeight: number = req.query.minHeight || null;
+            let maxHeight: number = req.query.maxHeight || null;
             if (!offset) {
                 offset = 0;
             }
             if (!limit) {
                 limit = 20;
             }
-            const pokemon = await this.pokemonRepository.find({
-                select: [
-                    "pokedexNumber",
-                    "pokemonName",
-                    "primaryType",
-                    "secondaryType",
-                ],
-                relations: [
-                    "sprites"
-                ],
-                skip: offset,
-                take: limit,
-                order: {
-                    pokedexNumber: "ASC"
+            const query = this.pokemonRepository
+                .createQueryBuilder("pokemon")
+                .select("pokemon")
+            let usedWhere: boolean = false;
+            if (name) {
+                query.where("pokemon.pokemonName ILIKE :name", { name: `%${name}%` })
+                usedWhere = true
+            }
+            if (generation) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.generation = :generation", { generation: generation })
+                } else {
+                    query.where("pokemon.generation = :generation", { generation: generation })
+                    usedWhere = true
                 }
-            })
-            await wait(500)
+            }
+            if (color) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.color = :color", { color: color})
+                } else {
+                    query.where("pokemon.color = :color", { color: color})
+                    usedWhere = true
+                }
+            }
+            if (minWeight) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.weight > :minWeight", { minWeight: minWeight})
+                } else {
+                    query.where("pokemon.weight > :minWeight", { minWeight: minWeight})
+                    usedWhere = true
+                }
+            }
+            if (maxWeight) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.weight < :maxWeight", { maxWeight: maxWeight})
+                } else {
+                    query.where("pokemon.weight < :maxWeight", { maxWeight: maxWeight})
+                    usedWhere = true
+                }
+            }
+            if (minHeight) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.height > :minHeight", { minHeight: minHeight})
+                } else {
+                    query.where("pokemon.height > :minHeight", { minHeight: minHeight})
+                    usedWhere = true
+                }
+            }
+            if (maxHeight) {
+                if (usedWhere) {
+                    query.andWhere("pokemon.height < :maxHeight", { maxHeight: maxHeight})
+                } else {
+                    query.where("pokemon.height < :maxHeight", { maxHeight: maxHeight})
+                    usedWhere = true
+                }
+            }
+            query.orderBy("pokemon.pokedexNumber")
+            if (!usedWhere) {
+                query.limit(limit).offset(offset)
+            }
+            const pokemon = await query.getMany()
             return res.status(200).json(
                 {
                     message: `Found ${pokemon.length} Pokémon.`,
@@ -122,7 +172,6 @@ export default class PokemonController {
                 }
                 return next(error)
             }
-            const originalPokemon = first
             console.log(`First: ${first.pokemonName}`)
             let second: Pokemon = null
             let third: Pokemon = null;
