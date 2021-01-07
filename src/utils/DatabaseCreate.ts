@@ -121,24 +121,32 @@ const createSprites = async (sprites: any, pokemonId: number): Promise<PokemonSp
             sprites.front_default,
             pokemonId,
             "front")
+    } else {
+        pokemonSprites.front = `sprites/error/nosprite.png`
     }
     if (sprites.back_default) {
         pokemonSprites.back = await saveImage(
             sprites.back_default,
             pokemonId,
             "back")
+    } else {
+        pokemonSprites.back = `sprites/error/nosprite.png`
     }
     if (sprites.front_shiny) {
         pokemonSprites.frontShiny = await saveImage(
             sprites.front_shiny,
             pokemonId,
             "frontShiny")
+    } else {
+        pokemonSprites.frontShiny = `sprites/error/nosprite.png`
     }
     if (sprites.back_shiny) {
         pokemonSprites.backShiny = await saveImage(
             sprites.back_shiny,
             pokemonId,
             "backShiny")
+    } else {
+        pokemonSprites.backShiny = `sprites/error/nosprite.png`
     }
     return pokemonSprites
 }
