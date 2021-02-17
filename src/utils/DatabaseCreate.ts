@@ -51,12 +51,19 @@ const setupDatabase = async () => {
         }
     }
 
+    console.log("\n")
+    console.log("Populating database now.")
+
     for (let i = 0; i < pokemonResources.length; i++) {
         const pokemon = await createPokemon(pokemonResources[i], pokemonSpeciesResources[i])
+        console.log("Populated Pokemon entity for " + pokemonResources[i].name)
         const sprites = await createSprites(pokemonResources[i].sprites, pokemonResources[i].id)
+        console.log("Loaded Sprites for " + pokemonResources[i].name)
         await connection.manager.save(sprites)
         pokemon.sprites = sprites
         await connection.manager.save(pokemon)
+        console.log(pokemonResources[i].name + "has been loaded into the database.")
+        console.log("\n")
     }
 
     for (let i = 0; i < pokemonSpeciesResources.length; i++) {

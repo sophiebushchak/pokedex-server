@@ -48,7 +48,7 @@ GET /pokemon/:pokedexNumber | Simply returns a response with the data about a si
 ## Example Front-End
 I have [developed a Pokédex Android application that consumes this API.](https://github.com/sophiebushchak/pokedex-android) It can be used as an example to develop other front-ends that consume this API.
 
-## Missing Features
+## Missing Features/Regrets
 There were some features that I would have wanted to fit into the API, but did not have the motivation for to do so.
 Here is a list of some features that could potentially be added in the future if I continue work on this project or in case someone would like to fork this repository and contribute.
 * Currently, it is not possible to get the alternate evolutions of a Pokémon. The functionality for retrieving all evolutions is relatively simple and only looks at Pokémon without branching evolutions.
@@ -56,3 +56,4 @@ Here is a list of some features that could potentially be added in the future if
 * The main GET /pokedex endpoint always returns the full result set. It would be nice to either minimize this or to provide options for a shallower response.
 * The database creation tool does not import the full list of Pokédex entries. It only imports the Black and White games' Pokédex entries for every Pokémon before Gen 6. Then, it starts importing the PokeDex entries for the respective first game of each following generation, as it can guarantee that the games will hold PokeDex data for these Pokémon. In the end it would be better to import all Pokédex entries for all languages and games, and then add filtering based on language.
 * There is generally no multi-language support. Everything is in English right now.
+* The database creation tool is kind of messy, but I did not bother fixing it because it is only used for one purpose and you only run it once to populate the database.
