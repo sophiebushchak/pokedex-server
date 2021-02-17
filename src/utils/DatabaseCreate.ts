@@ -44,7 +44,8 @@ const setupDatabase = async () => {
         console.log(i + ". " + retrievedPokemonSpecies.data.name)
         if (requestCount % 100 == 0) {
             console.log('Retrieved ' + i + " Pokemon from PokeAPI so far.")
-            console.log("Waiting 30 seconds to not overload the API..")
+/*          await Wait(30000)
+            console.log("Waiting 30 seconds to not overload the API..") */
             requestCount = 0;
             console.log("Continuing..")
         }
