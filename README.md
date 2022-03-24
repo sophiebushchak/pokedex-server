@@ -1,5 +1,5 @@
-# Pokédex REST Server
-Node.JS Pokédex REST API back-end with searching and filtering.
+# Pokédex Server
+Node.JS Pokédex HTTP API back-end with searching and filtering.
 The data is sourced from PokéApi.
 
 ## Motivation
@@ -10,7 +10,7 @@ to display all necessary information. Because it is a small project, I thought i
 that running it would result in fast response times for the specific data that I needed.
 
 ## Features
-* REST Endpoints for retrieving data necessary to display a Pokédex.
+* Endpoints for retrieving data necessary to display a Pokédex.
 
 * The data is sourced from PokéApi. To source this data, there is a database build tool.
 
