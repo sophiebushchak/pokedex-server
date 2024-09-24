@@ -5,6 +5,7 @@ import {performance} from "perf_hooks"
 
 import pokemonRoutes from "./rest-api/routes/PokemonRoutes"
 import errorResponse from "./middleware/ErrorResponse"
+import helloRoutes from "./rest-api/routes/HelloRoutes";
 
 const app = express();
 const port = Config.PORT;
@@ -26,6 +27,7 @@ const serverStartTimer = performance.now()
 app.use('/sprites', express.static("./src/sprites"))
 
 app.use('/api', pokemonRoutes)
+app.use('/api', helloRoutes)
 
 app.use(errorResponse)
 

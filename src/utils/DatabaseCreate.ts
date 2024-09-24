@@ -4,25 +4,22 @@ import {createWriteStream} from "fs"
 import axios from 'axios';
 import path from "path";
 import Wait from "./Wait"
-import {createConnection} from "typeorm";
+import {DataSource} from "typeorm";
 import {PokemonSprites} from "../database/entities/PokemonSprites";
 
-const pokeApiSourceUrl = 'http://localhost:8000/api/v2'
+const pokeApiSourceUrl = 'https://pokeapi.co/api/v2/'
 
 const setupDatabase = async () => {
     const entityPath = path.join(__dirname, "..", "database", "entities", "*.ts")
-    const connection = await createConnection({
-        "type": "postgres",
-        "host": 'localhost',
-        "port": 5432,
-        "username": 'postgres',
-        "password": 'password',
-        "database": 'postgres',
-        "schema": "pokedex-backend",
-        "connectTimeoutMS": 10000,
-        "synchronize": true,
-        "entities": [entityPath]
+    const connection = new DataSource({
+        type: "mysql",
+        host: "localhost",
+        port: 3306,
+        username: "user",
+        password: "password"
     })
+
+    await connection.initialize()
 
     const nationalPokedex = await axios.get(pokeApiSourceUrl + "/pokedex/1")
     const totalPokemon = nationalPokedex.data.pokemon_entries.length

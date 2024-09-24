@@ -1,4 +1,4 @@
-import {createConnection, getConnection, Repository} from "typeorm";
+import {DataSource, Repository} from "typeorm";
 import {Pokemon} from "../../database/entities/Pokemon";
 
 export default class PokemonController {
@@ -6,10 +6,18 @@ export default class PokemonController {
     private pokemonRepository: Repository<Pokemon>;
 
     constructor() {
-        createConnection()
-            .then(connection => {
-                this.pokemonRepository = connection.getRepository(Pokemon)
-            })
+        const connection = new DataSource({
+            type: "mysql",
+            host: "localhost",
+            port: 3306,
+            username: "user",
+            password: "password"
+        })
+
+        connection.initialize().then((dataSource) => {
+            this.pokemonRepository = dataSource.getRepository("pokemon")
+            }
+        )
     }
 
     getPokedex = async (req, res, next) => {
@@ -34,54 +42,54 @@ export default class PokemonController {
                 .select("pokemon")
             let usedWhere: boolean = false;
             if (name) {
-                query.where("pokemon.pokemonName ILIKE :name", { name: `%${name}%` })
+                query.where("pokemon.pokemonName ILIKE :name", {name: `%${name}%`})
                 usedWhere = true
             }
             if (generation) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.generation = :generation", { generation: generation })
+                    query.andWhere("pokemon.generation = :generation", {generation: generation})
                 } else {
-                    query.where("pokemon.generation = :generation", { generation: generation })
+                    query.where("pokemon.generation = :generation", {generation: generation})
                     usedWhere = true
                 }
             }
             if (color) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.color = :color", { color: color})
+                    query.andWhere("pokemon.color = :color", {color: color})
                 } else {
-                    query.where("pokemon.color = :color", { color: color})
+                    query.where("pokemon.color = :color", {color: color})
                     usedWhere = true
                 }
             }
             if (minWeight) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.weight > :minWeight", { minWeight: minWeight})
+                    query.andWhere("pokemon.weight > :minWeight", {minWeight: minWeight})
                 } else {
-                    query.where("pokemon.weight > :minWeight", { minWeight: minWeight})
+                    query.where("pokemon.weight > :minWeight", {minWeight: minWeight})
                     usedWhere = true
                 }
             }
             if (maxWeight) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.weight < :maxWeight", { maxWeight: maxWeight})
+                    query.andWhere("pokemon.weight < :maxWeight", {maxWeight: maxWeight})
                 } else {
-                    query.where("pokemon.weight < :maxWeight", { maxWeight: maxWeight})
+                    query.where("pokemon.weight < :maxWeight", {maxWeight: maxWeight})
                     usedWhere = true
                 }
             }
             if (minHeight) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.height > :minHeight", { minHeight: minHeight})
+                    query.andWhere("pokemon.height > :minHeight", {minHeight: minHeight})
                 } else {
-                    query.where("pokemon.height > :minHeight", { minHeight: minHeight})
+                    query.where("pokemon.height > :minHeight", {minHeight: minHeight})
                     usedWhere = true
                 }
             }
             if (maxHeight) {
                 if (usedWhere) {
-                    query.andWhere("pokemon.height < :maxHeight", { maxHeight: maxHeight})
+                    query.andWhere("pokemon.height < :maxHeight", {maxHeight: maxHeight})
                 } else {
-                    query.where("pokemon.height < :maxHeight", { maxHeight: maxHeight})
+                    query.where("pokemon.height < :maxHeight", {maxHeight: maxHeight})
                     usedWhere = true
                 }
             }
@@ -221,7 +229,7 @@ export default class PokemonController {
                 second.evolvesFrom = null
                 third = await this.pokemonRepository.findOne({
                     where: {
-                        evolvesFrom: second.pokedexNumber
+                        evolvesFrom: second
                     },
                     relations: [
                         "sprites",
