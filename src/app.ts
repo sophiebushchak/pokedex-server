@@ -1,4 +1,6 @@
 import express from "express";
+// @ts-ignore
+import helmet from "helmet";
 
 import Config from "../config";
 import {performance} from "perf_hooks"
@@ -8,6 +10,8 @@ import errorResponse from "./middleware/ErrorResponse"
 import helloRoutes from "./rest-api/routes/HelloRoutes";
 
 const app = express();
+app.use(helmet());
+
 const port = Config.PORT;
 
 app.use((req, res, next) => {
