@@ -20,7 +20,7 @@
     "express": "4.21.0",
     "helmet": "^7.1.0",
     "mysql2": "^3.11.3",
-    "pg": "8.5.1",
+    "pg": "8.12.0",
     "typeorm": "0.3.18"
   },
   "devDependencies": {
